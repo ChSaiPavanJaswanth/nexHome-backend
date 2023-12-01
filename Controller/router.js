@@ -61,10 +61,27 @@ nexHomeRouter.delete("/delete/:id", (req, res) => {
   });
 });
 
+nexHomeRouter.post("/propertyDel/:id", async (req, res) => {
+  var ind;
+
+  let data = await nexHomeSchema.findById(req.params.id);
+  data.sold.map((item, index) => {
+    if (item.id === req.body.id) {
+      ind = index;
+    }
+  });
+
+  data.sold.splice(ind, 1);
+  await data.save();
+
+  res.status(200).json(data);
+});
+
 nexHomeRouter.patch("/updateSellData/:id", async (req, res) => {
   let id = req.params.id;
   let data = await nexHomeSchema.findById(id);
-  //console.log(data);
+  // console.log(req.body);
+  // console.log(data);
   data.sold.push(req.body);
   await data.save();
 

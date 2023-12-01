@@ -8,7 +8,7 @@ sellRouter.post("/create-sell", (req, res) => {
     if (err) {
       return err;
     } else {
-      res.json(data);
+      res.status(200).json(data);
     }
   });
 });
@@ -31,6 +31,19 @@ sellRouter.get("/", (req, res) => {
         res.json(data);
       }
     });
+});
+
+sellRouter.delete("/deletePropert/:id", (req, res) => {
+  console.log("DElete called");
+
+  sellSchema.findByIdAndDelete(req.params.id, (err, data) => {
+    if (err) return err;
+    else res.json(data);
+  });
+
+  // res.status(200).json({
+  //   msg: "Sucess",
+  // });
 });
 
 module.exports = sellRouter;
