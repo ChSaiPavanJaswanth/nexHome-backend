@@ -34,7 +34,7 @@ sellRouter.get("/", (req, res) => {
 });
 
 sellRouter.delete("/deletePropert/:id", (req, res) => {
-  console.log("DElete called");
+  // console.log("DElete called");
 
   sellSchema.findByIdAndDelete(req.params.id, (err, data) => {
     if (err) return err;
