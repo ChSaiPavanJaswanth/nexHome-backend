@@ -3,6 +3,7 @@ const nexHomeRouter = express.Router();
 const nexHomeSchema = require("../model/schema");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const sellSchema = require("../model/sellSchema");
 
 nexHomeRouter.post("/login", (req, res) => {
   const { email, password } = req.body;
@@ -52,10 +53,7 @@ nexHomeRouter.get("/", (req, res) => {
 });
 
 nexHomeRouter.delete("/delete/:id", (req, res) => {
-  //console.log("Called");
   nexHomeSchema.findByIdAndDelete(req.params.id, (err, data) => {
-    // nexHomeSchema.findByIdAndRemove(req.params.id, (err, data) => {
-    //console.log("found");
     if (err) return err;
     else res.json(data);
   });
@@ -80,8 +78,7 @@ nexHomeRouter.post("/propertyDel/:id", async (req, res) => {
 nexHomeRouter.patch("/updateSellData/:id", async (req, res) => {
   let id = req.params.id;
   let data = await nexHomeSchema.findById(id);
-  // console.log(req.body);
-  // console.log(data);
+
   data.sold.push(req.body);
   await data.save();
 
@@ -89,6 +86,45 @@ nexHomeRouter.patch("/updateSellData/:id", async (req, res) => {
     message: "success",
     data,
   });
+});
+
+nexHomeRouter.patch("/wishlist/:id", async (req, res) => {
+  let data = await sellSchema.findById(req.body.id);
+  // console.log(data);
+
+  let user = await nexHomeSchema.findById(req.params.id);
+  // console.log("User");
+  // console.log(user.wishList);
+  user.wishList.push(data);
+  await user.save();
+
+  res.status(200).json({ msg: "Sucess", user: user });
+});
+
+nexHomeRouter.get("/getWishList/:id", async (req, res) => {
+  let data = await nexHomeSchema.findById(req.params.id);
+  res.status(200).json(data.wishList);
+});
+
+nexHomeRouter.patch("/delWish/:id", async (req, res) => {
+  let ind;
+  // console.log(req.params.id);
+  let user = await nexHomeSchema.findById(req.params.id);
+  // console.log(data.wishList);
+
+  let data = await sellSchema.findById(req.body.id);
+  // console.log(user.wishList.find(data));
+  // console.log(user.wishList.findIndex(data));
+  user.wishList.map((item, index) => {
+    if (item.id === req.body.id) {
+      ind = index;
+    }
+  });
+  // console.log(ind);
+  user.wishList.splice(ind, 1);
+  await user.save();
+
+  res.status(200).json(user);
 });
 
 nexHomeRouter.get("/getUser/:id", async (req, res) => {
