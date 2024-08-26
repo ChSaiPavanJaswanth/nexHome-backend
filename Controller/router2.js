@@ -1,7 +1,6 @@
 const express = require("express");
 const sellRouter = express.Router();
 const sellSchema = require("../model/sellSchema");
-const mongoose = require("mongoose");
 
 sellRouter.post("/create-sell", (req, res) => {
   sellSchema.create(req.body, (err, data) => {
